@@ -1,0 +1,1715 @@
+<!-- 图标文档   https://fontawesome.com/v4/icons/ -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>分类导航仪表盘</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind配置 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3B82F6',
+              secondary: '#10B981',
+              neutral: '#F3F4F6',
+              'neutral-dark': '#1F2937',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+        .card-hover {
+          @apply transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+        }
+      }
+    </style>
+
+    <style>
+      /* 基础动画 */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease forwards;
+      }
+
+      /* 进度条动画 */
+      @keyframes progress {
+        from {
+          width: 0;
+        }
+        to {
+          width: var(--progress-width);
+        }
+      }
+
+      .progress-bar {
+        --progress-width: 0%;
+        animation: progress 0.8s ease-out forwards;
+      }
+
+      /* 平滑滚动 */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* 任务项动画 */
+      .todo-item {
+        transition: all 0.2s ease;
+      }
+
+      /* 可编辑文本样式 */
+      .editable-text {
+        outline: none;
+        min-width: 100px;
+      }
+
+      .editable-text:focus {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-radius: 2px;
+      }
+
+      /* 搜索引擎按钮样式 */
+      .engine-btn {
+        transition: all 0.2s ease;
+      }
+
+      .engine-btn.active {
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+    <div class="max-w-6xl mx-auto w-full p-4 md:p-6">
+      <!-- 头部信息 -->
+      <header class="mb-6 animate-fade-in">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div>
+            <h2 id="greeting" class="text-[clamp(1.4rem,3vw,2rem)] font-bold">
+              早上好，用户
+            </h2>
+            <p id="date" class="text-gray-500">2023年1月1日 星期一</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div
+              class="bg-white p-2 rounded-lg border border-gray-100 flex items-center gap-2"
+            >
+              <i class="fa fa-sun-o text-yellow-500"></i>
+              <span id="weather">25°C 晴朗</span>
+            </div>
+            <div
+              class="bg-white p-2 rounded-lg border border-gray-100 font-mono"
+              id="time"
+            >
+              00:00:00
+            </div>
+            <button
+              id="theme-toggle"
+              class="bg-white p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+            >
+              <i class="fa fa-moon-o"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- 搜索框和搜索引擎切换按钮 -->
+      <section class="mb-7 animate-fade-in" style="animation-delay: 0.1s">
+        <!-- 搜索引擎切换按钮组 - 按键式切换 -->
+        <div class="flex flex-wrap gap-2 max-w-2xl mx-auto mb-3">
+          <button
+            class="engine-btn active px-3 py-1.5 text-sm rounded-full bg-primary text-white flex items-center gap-1.5"
+            data-engine="baidu"
+          >
+            <i class="fa fa-baidu"></i>
+            <span>百度</span>
+          </button>
+          <button
+            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+            data-engine="sogou"
+          >
+            <i class="fa fa-paw text-orange-500"></i>
+            <span>搜狗</span>
+          </button>
+          <button
+            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+            data-engine="bing"
+          >
+            <i class="fa fa-bing text-blue-500"></i>
+            <span>必应</span>
+          </button>
+          <button
+            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+            data-engine="google"
+          >
+            <i class="fa fa-google"></i>
+            <span>谷歌</span>
+          </button>
+        </div>
+
+        <!-- 搜索框 - 添加了搜索按钮 -->
+        <div class="relative max-w-2xl mx-auto">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <i class="fa fa-search text-gray-400"></i>
+          </div>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="搜索..."
+            class="w-full pl-12 pr-16 py-3.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+          />
+          <!-- 新增搜索按钮 -->
+          <button
+            id="search-button"
+            class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-primary/80 transition-colors"
+          >
+            <i class="fa fa-search"></i>
+            <span class="ml-1 text-sm font-medium">搜索</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 快速访问 -->
+      <section class="mb-7 animate-fade-in" style="animation-delay: 0.2s">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-semibold">常用网站</h3>
+        </div>
+
+        <div
+          id="quick-access-container"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"
+        >
+          <!-- 内容将通过JS动态生成 -->
+        </div>
+      </section>
+
+      <!-- 所有分类导航区域 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- 左侧和中间：分类导航 -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- 学习资源 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.3s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-blue-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-book text-blue-500 text-sm"></i>
+              </div>
+              学习资源
+            </h3>
+            <div
+              id="study-resources-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 招聘模块 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.35s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-indigo-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-briefcase text-indigo-500 text-sm"></i>
+              </div>
+              考试招聘
+            </h3>
+            <div
+              id="job-info-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 新闻资讯 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.4s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-green-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-newspaper-o text-green-500 text-sm"></i>
+              </div>
+              新闻资讯
+            </h3>
+            <div
+              id="news-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 休闲娱乐 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.45s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-red-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-gamepad text-red-500 text-sm"></i>
+              </div>
+              休闲娱乐
+            </h3>
+            <div
+              id="entertainment-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 购物消费 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.5s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-orange-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-shopping-cart text-orange-500 text-sm"></i>
+              </div>
+              购物消费
+            </h3>
+            <div
+              id="shopping-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 实用工具 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.55s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-purple-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-wrench text-purple-500 text-sm"></i>
+              </div>
+              实用工具
+            </h3>
+            <div
+              id="tools-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 设计导航 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.6s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-pink-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-map text-blue-500 text-sm"></i>
+              </div>
+              设计导航
+            </h3>
+            <div
+              id="design-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 常用文档 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.6s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-pink-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-book text-blue-500 text-sm"></i>
+              </div>
+              常用文档
+            </h3>
+            <div
+              id="word-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：功能模块 -->
+        <div class="space-y-5">
+          <!-- 待办事项 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.6s"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-semibold flex items-center">
+                <div
+                  class="w-7 h-7 rounded bg-yellow-50 flex items-center justify-center mr-2"
+                >
+                  <i class="fa fa-list-alt text-yellow-500 text-sm"></i>
+                </div>
+                待办事项
+              </h3>
+              <span
+                id="todo-count"
+                class="text-xs bg-gray-100 px-2 py-0.5 rounded-full"
+              >
+                0/0
+              </span>
+            </div>
+
+            <!-- 待办事项列表 -->
+            <div id="todo-list" class="space-y-2 mb-3">
+              <!-- 内容将通过JS从本地存储加载 -->
+            </div>
+
+            <!-- 添加待办事项 -->
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="new-todo"
+                placeholder="添加新任务..."
+                class="flex-grow px-3 py-2 text-sm border border-gray-200 rounded focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+              <button
+                id="add-todo"
+                class="bg-primary text-white px-3 py-2 rounded text-sm hover:bg-primary/90 transition-colors"
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 完成进度 -->
+          <div
+            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in"
+            style="animation-delay: 0.65s"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">
+              <div
+                class="w-7 h-7 rounded bg-purple-50 flex items-center justify-center mr-2"
+              >
+                <i class="fa fa-tasks text-purple-500 text-sm"></i>
+              </div>
+              完成进度
+            </h3>
+
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>学习计划</span>
+                  <span>65%</span>
+                </div>
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-blue-500 rounded-full progress-bar"
+                    style="--progress-width: 65%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>工作任务</span>
+                  <span>40%</span>
+                </div>
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-green-500 rounded-full progress-bar"
+                    style="--progress-width: 40%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>阅读目标</span>
+                  <span>80%</span>
+                </div>
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-yellow-500 rounded-full progress-bar"
+                    style="--progress-width: 80%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        // 网站数据 - 包含所有模块
+        const websiteData = {
+          // 快速访问网站
+          quickAccess: [
+            {
+              name: '哔哩哔哩',
+              url: 'https://www.bilibili.com',
+              icon: 'fa-play-circle',
+              iconColor: 'text-pink-500',
+              bgColor: 'bg-pink-50',
+            },
+            {
+              name: '抖音',
+              url: 'https://www.douyin.com',
+              icon: 'fa-music',
+              iconColor: 'text-red-500',
+              bgColor: 'bg-red-50',
+            },
+            {
+              name: '豆包',
+              url: 'https://www.doubao.com',
+              icon: 'fa-comments',
+              iconColor: 'text-blue-500',
+              bgColor: 'bg-blue-50',
+            },
+            {
+              name: '搜狗翻译',
+              url: 'https://fanyi.sogou.com',
+              icon: 'fa-language',
+              iconColor: 'text-orange-500',
+              bgColor: 'bg-orange-50',
+            },
+            {
+              name: 'QQ邮箱',
+              url: 'https://mail.qq.com',
+              icon: 'fa-envelope',
+              iconColor: 'text-green-500',
+              bgColor: 'bg-green-50',
+            },
+            {
+              name: 'GitHub',
+              url: 'https://github.com/',
+              icon: 'fa-github',
+              iconColor: 'text-gray-700',
+              bgColor: 'bg-gray-50',
+            },
+          ],
+
+          // 学习资源网站
+          studyResources: [
+            {
+              name: '粉笔题库',
+              url: 'https://www.fenbi.com/spa/tiku/guide/catalog/xingce?prefix=xingce',
+              icon: 'fa-graduation-cap',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '党的知识学习词典',
+              url: 'https://www.12371.cn/special/cidian/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '华图时政',
+              url: 'https://sydw.huatu.com/zhaokao/szrd/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '报纸大全',
+              url: 'https://www.dtdjzx.gov.cn/szlib/newspaper/index.jhtml',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '国家法规数据库',
+              url: 'https://flk.npc.gov.cn/',
+              icon: 'fa-university',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '食品伙伴网',
+              url: 'http://down.foodmate.net/',
+              icon: 'fa-university',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '标准信息服务平台',
+              url: 'https://hbba.sacinfo.org.cn/',
+              icon: 'fa-graduation-cap',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '中小学智慧教育平台',
+              url: 'https://basic.smartedu.cn/',
+              icon: 'fa-feed',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '石墨文档',
+              url: 'https://shimo.im/',
+              icon: 'fa-question-circle',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '道客巴巴',
+              url: 'https://www.doc88.com/',
+              icon: 'fa-comments',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '古诗文网',
+              url: 'https://www.gushiwen.cn/',
+              icon: 'fa-graduation-cap',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '刘文超Vin',
+              url: 'https://wenchaoedu.lanzouw.com/b01bej7ud?pwd=f687',
+              icon: 'fa-fire',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '微信读书',
+              url: 'https://weread.qq.com/',
+              icon: 'fa-book',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '第一试卷网',
+              url: 'https://www.shijuan1.com/#google_vignette',
+              icon: 'fa-file-code-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '秘塔写作猫',
+              url: 'https://xiezuocat.com/?s=itab',
+              icon: 'fa-fire',
+              iconColor: 'text-orange-500',
+            },
+          ],
+
+          // 考试招聘网站
+          jobInfo: [
+            {
+              name: '公考雷达',
+              url: 'https://www.gongkaoleida.com/',
+              icon: 'fa-flag',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '事业单位考试招聘网',
+              url: 'https://www.shiyebian.net/',
+              icon: 'fa-building',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'NTCE考试网',
+              url: 'https://ntce.neea.edu.cn',
+              icon: 'fa-users',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '山东人事考试信息网',
+              url: 'https://hrss.shandong.gov.cn/rsks/',
+              icon: 'fa-pencil',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '中国人事考试网',
+              url: 'http://www.cpta.com.cn',
+              icon: 'fa-certificate',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '全国专业技术人员资格考试报名服务平台',
+              url: 'https://zg.cpta.com.cn/examfront/login/initLogin.htm',
+              icon: 'fa-list-alt',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: 'BOSS直聘',
+              url: 'https://www.zhipin.com',
+              icon: 'fa-user',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '智联招聘',
+              url: 'https://www.zhaopin.com',
+              icon: 'fa-search',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '齐鲁人才网',
+              url: 'https://www.qlrc.com',
+              icon: 'fa-map-marker',
+              iconColor: 'text-orange-500',
+            },
+
+            {
+              name: '前程无忧',
+              url: 'https://www.51job.com',
+              icon: 'fa-briefcase',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '猎聘网',
+              url: 'https://www.liepin.com',
+              icon: 'fa-user-circle',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '中国公共招聘网',
+              url: 'http://job.mohrss.gov.cn/',
+              icon: 'fa-users',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '中华英才网',
+              url: 'https://www.chinahr.com',
+              icon: 'fa-users',
+              iconColor: 'text-purple-500',
+            },
+          ],
+
+          // 新闻资讯网站
+          news: [
+            {
+              name: '共产党员网',
+              url: 'https://www.12371.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '人民日报',
+              url: 'https://paper.people.com.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '人民网',
+              url: 'http://www.people.com.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-yellow-400',
+            },
+            {
+              name: '人民网山东',
+              url: 'http://sd.people.com.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-green-600',
+            },
+            {
+              name: '学习强国',
+              url: 'https://www.xuexi.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '求是网',
+              url: 'https://www.qstheory.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '半月谈',
+              url: 'http://www.banyuetan.org/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '学信网',
+              url: 'https://account.chsi.com.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '光明网',
+              url: 'https://www.gmw.cn/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '闪电新闻',
+              url: 'https://sdxw.iqilu.com/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '央视网',
+              url: 'https://news.cctv.com/',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '百家讲坛',
+              url: 'https://tv.cctv.com/2012/10/24/VIDE1355211744527964.shtml?spm=C59377.PhY3mfGXKdo3.EmOwVbjiQP0D.2940',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '百度新闻',
+              url: 'https://news.baidu.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '新浪新闻',
+              url: 'https://news.sina.com.cn',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '腾讯新闻',
+              url: 'https://news.qq.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '网易新闻',
+              url: 'https://163.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'CNN',
+              url: 'https://cnn.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: 'BBC新闻',
+              url: 'https://bbc.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'The Verge',
+              url: 'https://theverge.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: 'TechCrunch',
+              url: 'https://techcrunch.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '36氪',
+              url: 'https://36kr.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '虎嗅网',
+              url: 'https://huxiu.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '财经新闻',
+              url: 'https://finance.sina.com.cn',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-orange-600',
+            },
+            {
+              name: '体育新闻',
+              url: 'https://sports.qq.com',
+              icon: 'fa-newspaper-o',
+              iconColor: 'text-yellow-500',
+            },
+          ],
+
+          // 休闲娱乐网站
+          entertainment: [
+            {
+              name: '微信',
+              url: 'https://weixin.qq.com/',
+              icon: 'fa-weixin',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'QQ',
+              url: 'https://im.qq.com/',
+              icon: 'fa-qq',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '微博',
+              url: 'https://weibo.com/',
+              icon: 'fa-weibo',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '贴吧',
+              url: 'https://tieba.baidu.com/',
+              icon: 'fa-comments',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '领英',
+              url: 'https://www.linkedin.com/',
+              icon: 'fa-linkedin',
+              iconColor: 'text-blue-700',
+            },
+
+            {
+              name: '天涯论坛',
+              url: 'https://www.tianya.im/',
+              icon: 'fa-globe',
+              iconColor: 'text-orange-500',
+            },
+
+            {
+              name: '豆瓣小组',
+              url: 'https://www.douban.com/group/',
+              icon: 'fa-users',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '虎扑',
+              url: 'https://www.hupu.com/',
+              icon: 'fa-futbol-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '斗鱼直播',
+              url: 'https://douyu.com',
+              icon: 'fa-video-camera',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '虎牙直播',
+              url: 'https://huya.com',
+              icon: 'fa-video-camera',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '哔哩哔哩',
+              url: 'https://bilibili.com',
+              icon: 'fa-play-circle',
+              iconColor: 'text-pink-600',
+            },
+            {
+              name: '知乎',
+              url: 'https://zhihu.com',
+              icon: 'fa-comments',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '抖音',
+              url: 'https://www.douyin.com',
+              icon: 'fa-music',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '快手',
+              url: 'https://kuaishou.com',
+              icon: 'fa-camera',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '小红书',
+              url: 'https://xiaohongshu.com',
+              icon: 'fa-picture-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '豆瓣',
+              url: 'https://douban.com',
+              icon: 'fa-book',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'AcFun',
+              url: 'https://acfun.cn',
+              icon: 'fa-smile-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'YouTube',
+              url: 'https://youtube.com',
+              icon: 'fa-youtube-play',
+              iconColor: 'text-red-600',
+            },
+            {
+              name: 'Twitch',
+              url: 'https://twitch.tv',
+              icon: 'fa-twitch',
+              iconColor: 'text-purple-600',
+            },
+            {
+              name: 'Steam',
+              url: 'https://steamcommunity.com',
+              icon: 'fa-gamepad',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '小霸王红白机',
+              url: 'https://www.yikm.net/',
+              icon: 'fa-gamepad',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '文王',
+              url: 'https://jinqiangua.911cha.com/',
+              icon: 'fa-gamepad',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '周易大学堂',
+              url: 'https://zydx.top/',
+              icon: 'fa-comments',
+              iconColor: 'text-purple-600',
+            },
+            {
+              name: 'FreeOK',
+              url: 'https://www.freeok.mobi/',
+              icon: 'fa-play-circle',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '吉祥风水网',
+              url: 'https://www.gdjxfsw.com/pp/index.html',
+              icon: 'fa-book',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '全民万年历',
+              url: 'https://www.qmrl888.com/',
+              icon: 'fa-book',
+              iconColor: 'text-blue-600',
+            },
+            {
+              name: '万年历网',
+              url: 'https://www.wannianli3.com/',
+              icon: 'fa-book',
+              iconColor: 'text-purple-500',
+            },
+          ],
+
+          // 消费购物网站
+          shopping: [
+            {
+              name: '淘宝',
+              url: 'https://taobao.com',
+              icon: 'fa-shopping-bag',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '京东',
+              url: 'https://jd.com',
+              icon: 'fa-truck',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '拼多多',
+              url: 'https://pinduoduo.com',
+              icon: 'fa-users',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '苏宁易购',
+              url: 'https://suning.com',
+              icon: 'fa-home',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '亚马逊',
+              url: 'https://amazon.com',
+              icon: 'fa-globe',
+              iconColor: 'text-orange-600',
+            },
+            {
+              name: '唯品会',
+              url: 'https://vip.com',
+              icon: 'fa-tag',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '天猫',
+              url: 'https://tmall.com',
+              icon: 'fa-shopping-basket',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '1688批发',
+              url: 'https://1688.com',
+              icon: 'fa-cubes',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '美团',
+              url: 'https://meituan.com',
+              icon: 'fa-cutlery',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '饿了么',
+              url: 'https://ele.me',
+              icon: 'fa-cutlery',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '考拉海购',
+              url: 'https://kaola.com',
+              icon: 'fa-globe',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '京东全球购',
+              url: 'https://jd.hk',
+              icon: 'fa-plane',
+              iconColor: 'text-red-500',
+            },
+          ],
+
+          // 实用工具网站
+          tools: [
+            {
+              name: '锤子在线工具网',
+              url: 'https://www.toolhelper.cn/',
+              icon: 'fa-wrench',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '站长工具',
+              url: 'https://tool.chinaz.com',
+              icon: 'fa-line-chart',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '在线工具',
+              url: 'https://tool.lu',
+              icon: 'fa-cogs',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '在线OCR',
+              url: 'https://ocr.wdku.net/',
+              icon: 'fa-file-text-o',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '在线PS',
+              url: 'https://ps.gaoding.com/',
+              icon: 'fa-paint-brush',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '思维导图',
+              url: 'https://www.processon.com/',
+              icon: 'fa-sitemap',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '草料二维码',
+              url: 'https://cli.im/',
+              icon: 'fa-qrcode',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '临时邮箱',
+              url: 'https://temp-mail.org/zh/',
+              icon: 'fa-envelope-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '在线计算器',
+              url: 'https://www.calculator.net/',
+              icon: 'fa-calculator',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '正则工具',
+              url: 'https://regexr.com',
+              icon: 'fa-search',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: 'JSON格式化',
+              url: 'https://www.json.cn/',
+              icon: 'fa-code',
+              iconColor: 'text-green-700',
+            },
+
+            {
+              name: '格式转换',
+              url: 'https://convertio.co/zh/',
+              icon: 'fa-exchange',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: '图片压缩',
+              url: 'https://tinypng.com',
+              icon: 'fa-compress',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '颜色拾取器',
+              url: 'https://htmlcolorcodes.com/zh/',
+              icon: 'fa-eyedropper',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '配色工具',
+              url: 'https://colorhunt.co',
+              icon: 'fa-paint-brush',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '函数图像',
+              url: 'https://zuotu.91maths.com/',
+              icon: 'fa-font',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '特殊字符',
+              url: 'https://copypastecharacter.com',
+              icon: 'fa-font',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '千帆搜索',
+              url: 'https://www.niceso.net/',
+              icon: 'fa-search',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '猫狸云搜索',
+              url: 'https://www.maoliyun.com/',
+              icon: 'fa-search',
+              iconColor: 'text-blue-500',
+            },
+          ],
+
+          // 设计导航网站
+          design: [
+            {
+              name: '优设导航',
+              url: 'https://hao.uisdc.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '设计导航',
+              url: 'https://hao.shejidaren.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '奇迹秀',
+              url: 'https://www.qijishow.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '搜图导航',
+              url: 'https://www.91sotu.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: '16导航',
+              url: 'https://16map.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-blue-600',
+            },
+            {
+              name: '美叶',
+              url: 'https://www.meiye.art/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: 'Uxmap',
+              url: 'https://www.uxmap.cn/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: 'HiPPTER',
+              url: 'https://www.hippter.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: '花瓣网',
+              url: 'https://huaban.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: '站酷ZCOOL',
+              url: 'https://www.zcool.com.cn/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: '觅元素',
+              url: 'https://www.51yuansu.com/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'Canva可画',
+              url: 'https://www.canva.cn/',
+              icon: 'fa-picture-o',
+              iconColor: 'text-blue-500',
+            },
+          ],
+
+          // 常用文档网站
+          word: [
+            {
+              name: '菜鸟教程',
+              url: 'https://www.runoob.com',
+              icon: 'fa-code',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: 'W3Schools',
+              url: 'https://w3schools.com',
+              icon: 'fa-code',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'MDN',
+              url: 'https://developer.mozilla.org',
+              icon: 'fa-code',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: 'github',
+              url: 'https://github.com/',
+              icon: 'fa-code',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'LeetCode',
+              url: 'https://leetcode.cn',
+              icon: 'fa-code',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: 'Stack Overflow',
+              url: 'https://stackoverflow.com',
+              icon: 'fa-code',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: '思否',
+              url: 'https://segmentfault.com',
+              icon: 'fa-code',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: '掘金',
+              url: 'https://juejin.cn',
+              icon: 'fa-code',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: 'Angular',
+              url: 'https://angular.cn/',
+              icon: 'fa-code',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'React中文文档',
+              url: 'https://zh-hans.react.dev/',
+              icon: 'fa-code',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: 'Vue.js',
+              url: 'https://cn.vuejs.org/',
+              icon: 'fa-code',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'Vue3',
+              url: 'https://vue3js.cn/global/',
+              icon: 'fa-code',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: 'jQuery',
+              url: 'https://jquery.com/',
+              icon: 'fa-code',
+              iconColor: 'text-purple-500',
+            },
+            {
+              name: 'jQuery中文',
+              url: 'https://www.jquery123.com/',
+              icon: 'fa-code',
+              iconColor: 'text-pink-500',
+            },
+            {
+              name: 'Bootstrap',
+              url: 'https://www.bootstraph.com/',
+              icon: 'fa-code',
+              iconColor: 'text-red-500',
+            },
+            {
+              name: 'LayUI',
+              url: 'https://layui.dev/',
+              icon: 'fa-code',
+              iconColor: 'text-orange-500',
+            },
+            {
+              name: 'TailwindCSS',
+              url: 'https://www.tailwindcss.cn/',
+              icon: 'fa-code',
+              iconColor: 'text-yellow-500',
+            },
+            {
+              name: 'Git',
+              url: 'https://git-scm.com/',
+              icon: 'fa-code',
+              iconColor: 'text-green-500',
+            },
+            {
+              name: 'webpack',
+              url: 'https://webpack.js.org/',
+              icon: 'fa-code',
+              iconColor: 'text-blue-500',
+            },
+            {
+              name: 'webpack中文',
+              url: 'https://www.webpackjs.com/',
+              icon: 'fa-code',
+              iconColor: 'text-purple-500',
+            },
+          ],
+        }
+
+        // 生成快速访问网站卡片
+        function renderQuickAccess() {
+          const container = document.getElementById('quick-access-container')
+          websiteData.quickAccess.forEach((site) => {
+            const card = document.createElement('a')
+            card.href = site.url
+            card.target = '_blank'
+            card.className =
+              'bg-white rounded-lg p-3 flex flex-col items-center justify-center text-center border border-gray-100 card-hover'
+            card.innerHTML = `
+                  <div class="w-10 h-10 rounded-full ${site.bgColor} flex items-center justify-center mb-2">
+                    <i class="fa ${site.icon} ${site.iconColor}"></i>
+                  </div>
+                  <span class="text-xs">${site.name}</span>
+                `
+            container.appendChild(card)
+          })
+        }
+
+        // 生成分类链接（学习资源、考试招聘等）
+        function renderCategoryLinks(containerId, sites) {
+          const container = document.getElementById(containerId)
+
+          console.log(containerId, sites)
+
+          // console.log(container)
+
+          sites.forEach((site) => {
+            const link = document.createElement('a')
+            link.href = site.url
+            link.target = '_blank'
+            link.className =
+              'p-2.5 rounded border border-gray-100 hover:border-primary/30 hover:bg-primary/5 transition-colors flex items-center gap-2 text-sm'
+            link.innerHTML = `
+                  <i class="fa ${site.icon} ${site.iconColor} text-xs"></i>
+                  <span>${site.name}</span>
+                `
+            container.appendChild(link)
+          })
+        }
+
+        // 待办事项功能 - 带本地存储
+        function setupTodoFunctionality() {
+          const todoList = document.getElementById('todo-list')
+          const newTodoInput = document.getElementById('new-todo')
+          const addTodoButton = document.getElementById('add-todo')
+          const todoCount = document.getElementById('todo-count')
+          const STORAGE_KEY = 'dashboard_todos'
+
+          // 从本地存储加载待办事项
+          function loadTodos() {
+            const savedTodos = localStorage.getItem(STORAGE_KEY)
+            return savedTodos
+              ? JSON.parse(savedTodos)
+              : [
+                  { id: 1, text: '完成项目报告', completed: true },
+                  { id: 2, text: '回复邮件', completed: true },
+                  { id: 3, text: '准备会议材料', completed: false },
+                  { id: 4, text: '购买生活用品', completed: false },
+                  { id: 5, text: '锻炼身体', completed: false },
+                ]
+          }
+
+          // 保存待办事项到本地存储
+          function saveTodos(todos) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+          }
+
+          // 渲染所有待办事项
+          function renderTodos(todos) {
+            // 清空列表
+            todoList.innerHTML = ''
+
+            // 渲染每个待办事项
+            todos.forEach((todo) => {
+              const todoItem = document.createElement('div')
+              todoItem.className =
+                'todo-item flex items-center gap-2 p-2 hover:bg-gray-50 rounded'
+              todoItem.innerHTML = `
+                    <input type="checkbox" ${
+                      todo.completed ? 'checked' : ''
+                    } class="w-4 h-4 rounded text-primary focus:ring-primary" />
+                    <span class="text-sm flex-grow ${
+                      todo.completed ? 'line-through text-gray-500' : ''
+                    }">${todo.text}</span>
+                    <button class="text-gray-400 hover:text-red-500 p-1">
+                      <i class="fa fa-trash-o text-xs"></i>
+                    </button>
+                  `
+
+              // 添加删除功能
+              const deleteButton = todoItem.querySelector('button')
+              deleteButton.addEventListener('click', () => {
+                const updatedTodos = todos.filter((t) => t.id !== todo.id)
+                saveTodos(updatedTodos)
+                renderTodos(updatedTodos)
+                updateTodoCount(updatedTodos)
+              })
+
+              // 添加完成功能
+              const checkbox = todoItem.querySelector('input[type="checkbox"]')
+              checkbox.addEventListener('change', () => {
+                const updatedTodos = todos.map((t) =>
+                  t.id === todo.id ? { ...t, completed: checkbox.checked } : t
+                )
+                saveTodos(updatedTodos)
+                renderTodos(updatedTodos)
+                updateTodoCount(updatedTodos)
+              })
+
+              todoList.appendChild(todoItem)
+            })
+          }
+
+          // 更新待办事项计数
+          function updateTodoCount(todos) {
+            const total = todos.length
+            const completed = todos.filter((todo) => todo.completed).length
+            todoCount.textContent = `${completed}/${total}`
+          }
+
+          // 添加新待办事项
+          function addNewTodo(text) {
+            if (!text.trim()) return
+
+            const todos = loadTodos()
+            const newId =
+              todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1
+
+            const newTodo = {
+              id: newId,
+              text: text.trim(),
+              completed: false,
+            }
+
+            const updatedTodos = [...todos, newTodo]
+            saveTodos(updatedTodos)
+            renderTodos(updatedTodos)
+            updateTodoCount(updatedTodos)
+
+            newTodoInput.value = ''
+          }
+
+          // 按钮添加待办事项
+          addTodoButton.addEventListener('click', () => {
+            addNewTodo(newTodoInput.value)
+          })
+
+          // 回车添加待办事项
+          newTodoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              addNewTodo(newTodoInput.value)
+            }
+          })
+
+          // 初始化加载待办事项
+          const initialTodos = loadTodos()
+          renderTodos(initialTodos)
+          updateTodoCount(initialTodos)
+        }
+
+        // 搜索引擎切换功能
+        function setupSearchEngine() {
+          const engineButtons = document.querySelectorAll('.engine-btn')
+          const searchInput = document.getElementById('search-input')
+          const searchButton = document.getElementById('search-button')
+          let currentEngine = 'baidu'
+
+          // 搜索引擎配置
+          const engines = {
+            baidu: 'https://www.baidu.com/s?wd=',
+            sogou: 'https://www.sogou.com/web?query=',
+            bing: 'https://www.bing.com/search?q=',
+            google: 'https://www.google.com/search?q=',
+          }
+
+          // 切换搜索引擎
+          engineButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+              // 更新按钮样式
+              engineButtons.forEach((btn) => {
+                btn.classList.remove('active', 'bg-primary', 'text-white')
+                btn.classList.add('bg-gray-100', 'text-gray-700')
+              })
+
+              button.classList.add('active', 'bg-primary', 'text-white')
+              button.classList.remove('bg-gray-100', 'text-gray-700')
+
+              // 更新当前搜索引擎
+              currentEngine = button.dataset.engine
+            })
+          })
+
+          // 执行搜索
+          function performSearch() {
+            const query = searchInput.value.trim()
+            if (query) {
+              window.open(
+                engines[currentEngine] + encodeURIComponent(query),
+                '_blank'
+              )
+            }
+          }
+
+          // 搜索按钮点击事件
+          searchButton.addEventListener('click', performSearch)
+
+          // 回车键搜索
+          searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              performSearch()
+            }
+          })
+        }
+
+        // 更新时间和日期
+        function updateDateTime() {
+          const now = new Date()
+          const dateElement = document.getElementById('date')
+          const timeElement = document.getElementById('time')
+          const greetingElement = document.getElementById('greeting')
+
+          // 更新日期
+          const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+          }
+          dateElement.textContent = now.toLocaleDateString('zh-CN', options)
+
+          // 更新时间
+          const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }
+          timeElement.textContent = now.toLocaleTimeString('zh-CN', timeOptions)
+
+          // 更新问候语
+          const hour = now.getHours()
+          let greeting = '早上好'
+          if (hour >= 12 && hour < 18) {
+            greeting = '下午好'
+          } else if (hour >= 18) {
+            greeting = '晚上好'
+          }
+          greetingElement.textContent = `${greeting}，用户`
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+          // 渲染所有网站链接
+          renderQuickAccess()
+          renderCategoryLinks(
+            'study-resources-container',
+            websiteData.studyResources
+          )
+          renderCategoryLinks('job-info-container', websiteData.jobInfo)
+          renderCategoryLinks('news-container', websiteData.news)
+          renderCategoryLinks(
+            'entertainment-container',
+            websiteData.entertainment
+          )
+          renderCategoryLinks('shopping-container', websiteData.shopping)
+          renderCategoryLinks('tools-container', websiteData.tools)
+          renderCategoryLinks('design-container', websiteData.design)
+          renderCategoryLinks('word-container', websiteData.word)
+
+          // 初始化功能
+          setupTodoFunctionality()
+          setupSearchEngine()
+
+          // 更新时间并设置定时器
+          updateDateTime()
+          setInterval(updateDateTime, 1000)
+        })
+      </script>
+    </div>
+  </body>
+</html>

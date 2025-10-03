@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>便捷导航中心</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      }
+      body {
+        background-color: #f0f2f5;
+        background-image: radial-gradient(
+            rgba(67, 97, 238, 0.05) 1px,
+            transparent 1px
+          ),
+          radial-gradient(rgba(247, 37, 133, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+        background-position: 0 0, 25px 25px;
+        padding: 30px 0 50px;
+        min-height: 100vh;
+      }
+      /* 网页标题样式 */
+      .page-title {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 0 20px;
+        animation: fadeIn 0.8s ease-out;
+      }
+      .page-title h1 {
+        color: #2d3748;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 12px;
+      }
+      .page-title h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #4361ee, #f72585);
+        border-radius: 3px;
+      }
+      /* 容器居中，控制整体宽度 */
+      .nav-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      /* 导航模块外层：网页端两列，移动端一列 */
+      .nav-modules {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+      /* 单个导航模块样式：渐变标题+卡片阴影 */
+      .nav-module {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInUp 0.6s ease-out forwards;
+      }
+      #module1 {
+        animation-delay: 0.1s;
+      }
+      #module2 {
+        animation-delay: 0.2s;
+      }
+
+      .nav-module:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+      }
+      .module-header {
+        background: linear-gradient(135deg, #4361ee, #3a0ca3);
+        padding: 22px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .module-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .nav-module:hover .module-header::before {
+        opacity: 1;
+      }
+      .module-header h3 {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+      }
+      /* 模块2单独配色，区分两个模块 */
+      #module2 .module-header {
+        background: linear-gradient(135deg, #f72585, #4cc9f0);
+      }
+      /* 导航内容区：优化间距和背景 */
+      .nav-content {
+        padding: 32px 28px;
+      }
+      .nav-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+      /* 导航链接样式：精致hover效果 */
+      .nav-links a {
+        display: block;
+        text-decoration: none;
+        color: #4a5568;
+        font-size: 16px;
+        padding: 14px 0;
+        text-align: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        border: 1px solid transparent;
+      }
+      .nav-links a:hover {
+        color: #fff;
+        background: #4361ee;
+        transform: scale(1.04);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      /* 模块2链接单独hover色 */
+      #module2 .nav-links a:hover {
+        background: #f72585;
+        box-shadow: 0 4px 12px rgba(247, 37, 133, 0.3);
+      }
+      /* 底部信息 */
+      .footer-info {
+        text-align: center;
+        margin-top: 40px;
+        color: #94a3b8;
+        font-size: 14px;
+        animation: fadeIn 1s ease-out forwards;
+        opacity: 0;
+      }
+      /* 移动端响应式：模块改为一列 */
+      @media (max-width: 768px) {
+        body {
+          padding: 25px 0 40px;
+          background-size: 30px 30px;
+        }
+        .page-title {
+          margin-bottom: 30px;
+        }
+        .page-title h1 {
+          font-size: 24px;
+          padding-bottom: 10px;
+        }
+        .nav-modules {
+          grid-template-columns: 1fr;
+          gap: 26px;
+        }
+        .nav-content {
+          padding: 26px 20px;
+        }
+        .nav-links {
+          gap: 14px;
+        }
+        .nav-links a {
+          padding: 12px 0;
+          font-size: 15px;
+        }
+        .module-header {
+          padding: 18px 0;
+        }
+        .module-header h3 {
+          font-size: 18px;
+        }
+        .footer-info {
+          margin-top: 30px;
+          font-size: 13px;
+        }
+      }
+      /* 动画效果 */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 网页标题 -->
+    <div class="page-title">
+      <h1>便捷导航中心</h1>
+    </div>
+
+    <div class="nav-container">
+      <div class="nav-modules">
+        <!-- 模块1 -->
+        <div class="nav-module" id="module1">
+          <div class="module-header">
+            <h3>国内机场</h3>
+          </div>
+          <div class="nav-content">
+            <div class="nav-links" id="links1"></div>
+          </div>
+        </div>
+        <!-- 模块2 -->
+        <div class="nav-module" id="module2">
+          <div class="module-header">
+            <h3>国际机场</h3>
+          </div>
+          <div class="nav-content">
+            <div class="nav-links" id="links2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer-info">便捷导航中心 &copy; 2025 | 让访问更简单</div>
+
+    <script>
+      // 1. 定义两个模块的导航数据
+      const module1Links = [
+        { name: 'k.33k.la', url: 'https://k.33k.la/click.html?sid=529982' },
+        { name: 'missav（谷歌）', url: 'https://missav.ws' },
+        { name: '深夜福利站-00', url: 'http://ty.sysysy87.cc/' },
+        { name: '火车36小时', url: 'http://yyg.36huo290che.xyz/' },
+        { name: '私人女秘书-00', url: 'http://en2.nnmmss99.cc/' },
+        { name: '深夜必备导航', url: 'http://g3h4i5j6.sybbdh49.top/' },
+        { name: '91天堂', url: 'http://cd6hmsdt.91tang1.xyz/' },
+        {
+          name: '91天堂—寂寞空姐',
+          url: 'http://cd6hmsdt.91tang1.xyz/vodplay/43246-1-1.html',
+        },
+        { name: '破处了', url: 'http://ls.pochu78.xyz/' },
+        { name: '背德人妻-00', url: 'http://g3h4i5j6.bdrq55.buzz/' },
+        { name: '菠萝视频-00', url: 'https://plh4.tbl1081pjn.top' },
+        { name: '农夫电影网', url: 'https://www.nfdyw.com/' },
+        { name: '？？搜sone312', url: 'https://www.666aahh.cc/' },
+        { name: '小草视频+1', url: 'https://www.xiaocaoav16.top/' },
+        { name: '国模--00', url: 'https://h65hz1.bcfvusm.net/' },
+        { name: '黑料不打烊-00', url: 'https://guochanpp.fun/' },
+        { name: '四色-00', url: 'https://5ku1p.com/' },
+        { name: '换脸-00', url: 'https://thdy7.quest/' },
+        { name: '试一试-00', url: 'https://xgasshqjxx55.top/' },
+        { name: '猫咪视频-00', url: 'https://www.bmb68.com/' },
+        { name: '猫咪视频2-00', url: 'http://56fb7b093cd8.com' },
+        { name: '黄色仓库-00', url: 'https://hsck.cc/' },
+        { name: 'miya-00', url: 'http://miya787.com/' },
+        { name: 'YOUPORN-00', url: 'http://zhu36.com/' },
+        { name: '神秘电影-00', url: 'http://sm69.vip/' },
+        { name: '奇优影院手机观看-00', url: 'http://m.kec8.com/' },
+        { name: '8x8x-00', url: 'http://bwsh8x.mom/' },
+        { name: '点点娱乐-00', url: 'https://cxx08.top/guide.html' },
+        {
+          name: '菠萝视频-00',
+          url: 'https://plh4.tbl1081pjn.top:9527/video.html?viewkey=1b9346bf7a90d9a961e459eca177d73b&spm=1743806348442.1743683101',
+        },
+        {
+          name: '《H小说免费》飞驰影院',
+          url: 'http://wlcb.pxbhe.com/play/tqhiqcmwcgdc-w-14.html',
+        },
+        { name: '等待探索', url: 'https://www.baidu.com' },
+      ]
+
+      const module2Links = [
+        { name: 'pornhub', url: 'https://www.pornhub.com/' },
+        { name: 'pornhub2', url: 'https://cn.pornhub.com/' },
+        { name: 'Porn Dude', url: 'https://www.theporndude.com/zh' },
+        { name: '18H 宅宅愛動漫', url: 'https://18h.animezilla.com/' },
+        {
+          name: '()18Comic (禁漫天堂) &amp; 27+ 成人日式漫画网站 喜欢 18comic.org',
+          url: 'https://theporndude.com/zh/3797/18comic',
+        },
+        { name: 'HentaiPaw', url: 'https://zh.hentaipaw.com/' },
+        { name: 'twhentai', url: 'https://twhentai.com/index.html' },
+        { name: 'jable（谷歌）', url: 'https://jable.tv' },
+        { name: 'nhentai', url: 'https://nhentai.com/xxx' },
+        { name: 'nhentai2', url: 'https://nhentai.net/' },
+        { name: '紳士漫畫wnacg', url: 'https://www.wnacg.org/' },
+        {
+          name: '喵紳士NyaHentai(非主页)',
+          url: 'https://zh.nyahentai.com/parody/naruto/popular/page/4',
+        },
+        { name: '18H漫画', url: 'https://18hmanga.com/' },
+        { name: 'JComic', url: 'https://jcomic.net/' },
+        { name: '禁漫天堂', url: 'https://18comic.vip/' },
+        { name: '18comic', url: 'https://18comic.org/' },
+        { name: '禁漫，禁漫天堂', url: 'https://www.uaa001.com/comic' },
+        { name: 'Hanime1', url: 'https://hanime1.me/comics' },
+        { name: 'Tube8', url: 'https://www.tube8.com' },
+        { name: 'redtube', url: 'https://www.redtube.com' },
+        { name: 'youporn', url: 'https://www.youporn.com' },
+        { name: '啤酒漫画网', url: 'https://www.perwrj.com' },
+        { name: 'H次元', url: 'https://h-ciyuan.com' },
+        { name: 'Cartoon Porn', url: 'https://cartoonporn.to' },
+        { name: '手机看漫画', url: 'https://m.manhuagui.com' },
+        { name: '色漫网', url: 'https://www.cartoon18.org' },
+        { name: '情色视频网站', url: 'https://www.pornbest.co' },
+        { name: '伦理电影', url: 'https://ptt.co' },
+        { name: '久久网', url: 'https://jiujiu.one' },
+        { name: '黄色网站导航', url: 'https://huangse.love' },
+        { name: 'Redtube', url: 'https://www.redtube.com' },
+        { name: '等待探索', url: 'https://www.google.com' },
+      ]
+
+      // 2. 封装添加导航链接的函数
+      function addNavLinks(containerId, linksData) {
+        const container = document.getElementById(containerId)
+
+        linksData.forEach((link) => {
+          const aTag = document.createElement('a')
+          aTag.href = link.url
+          aTag.target = '_blank' // 新窗口打开
+          aTag.textContent = link.name
+          container.appendChild(aTag)
+        })
+      }
+
+      // 3. 调用函数，为两个模块添加导航内容
+      addNavLinks('links1', module1Links)
+      addNavLinks('links2', module2Links)
+    </script>
+  </body>
+</html>
