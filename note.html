@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的前端笔记</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #eee;
+      }
+      .container {
+        width: 800px;
+        margin: 20px auto;
+        line-height: 2.5;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 50px;
+      }
+      #top {
+        position: relative;
+        /* background-image: linear-gradient(to right, rgba(255, 0, 0, 0.5), rgba(0, 255, 0, 0.5), rgba(0, 0, 255, 0.5)); */
+      }
+      #time {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      h3 {
+        padding-left: 10px;
+        margin: 20px 0 10px;
+      }
+      h3::before {
+        content: ' ';
+        position: relative;
+        top: 10px;
+        left: -10px;
+        display: inline-block;
+        width: 6px;
+        height: 36px;
+        background-color: #cce5ff;
+      }
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      ul li {
+        color: #333;
+        list-style: none;
+        width: 49.2%;
+        margin: 0 10px 10px 0;
+      }
+      ul li:nth-child(2n) {
+        margin-right: 0;
+      }
+      ul li a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: #333;
+        /* border: 1px solid #ccc; */
+        text-decoration: none;
+        font-family: 'Courier New', Courier, monospace;
+        border-radius: 5px;
+        padding: 10px 25px;
+      }
+      ul li a:hover {
+        color: blue;
+        /* font-weight: 700; */
+        background-color: rgba(0, 0, 255, 0.1);
+      }
+      ::selection {
+        color: #fff;
+        background-color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="top">
+        <h1>我的前端笔记</h1>
+        <h4 id="time">时间：</h4>
+      </div>
+      <section>
+        <h3>写在前面</h3>
+        <ul></ul>
+      </section>
+      <section>
+        <h3>第一部分——前端基础</h3>
+        <ul></ul>
+      </section>
+      <section>
+        <h3>第二部分——前端进阶</h3>
+        <ul></ul>
+      </section>
+      <section>
+        <h3>第三部分——前端工程化</h3>
+        <ul></ul>
+      </section>
+      <section>
+        <h3>第四部分——前端框架</h3>
+        <ul></ul>
+      </section>
+      <section>
+        <h3>第五部分——前端优化</h3>
+        <ul></ul>
+      </section>
+    </div>
+
+    <script type="text/javascript">
+      const time = document.getElementById('time')
+      const ul0 = document.getElementsByTagName('ul')[0]
+      const ul1 = document.getElementsByTagName('ul')[1]
+      const ul2 = document.getElementsByTagName('ul')[2]
+      const ul3 = document.getElementsByTagName('ul')[3]
+      const ul4 = document.getElementsByTagName('ul')[4]
+      const ul5 = document.getElementsByTagName('ul')[5]
+
+      // 写在前面
+      const arr0 = {
+        floder: '0.写在前面',
+        content: [
+          { name: '1.写在前面', check: '✅️' },
+          { name: '2.Typora', check: '✅️' },
+          { name: '3.VSCode', check: '✅️' }
+        ]
+      }
+      // 第一部分——前端基础
+      const arr1 = {
+        floder: '1.前端基础',
+        content: [
+          { name: '1.HTML', check: '✅️' },
+          { name: '2.CSS', check: '✅️' },
+          { name: '3.JavaScript', check: '✅️' },
+          { name: '4.JavaScript WebAPIs', check: '🟡' },
+          { name: '5.JavaScript 进阶', check: '🟡' }
+        ]
+      }
+      // 第二部分——前端进阶
+      const arr2 = {
+        floder: '2.前端进阶',
+        content: [
+          { name: '1.CSS预处理器', check: '✅️' },
+          { name: '2.ES6', check: '❌' },
+          { name: '3.JavaScript库', check: '❌' },
+          { name: '4.CSS框架', check: '❌' },
+          { name: '5.字体图标库', check: '✅️' },
+          { name: '6.正则表达式', check: '✅️' }
+        ]
+      }
+      // 第三部分——前端工程化
+      const arr3 = {
+        floder: '3.前端工程化',
+        content: [
+          { name: '1.Nodejs', check: '❌' },
+          { name: '2.Ajax', check: '❌' },
+          { name: '3.Git', check: '✅️' },
+          { name: '4.构建工具', check: '✅️' },
+          { name: '5.TypeScript', check: '❌' }
+        ]
+      }
+      // 第四部分——前端框架
+      const arr4 = {
+        floder: '4.前端框架',
+        content: [
+          { name: '1.Vue', check: '❌' },
+          { name: '2.React', check: '❌' },
+          { name: '3.Angular', check: '❌' }
+        ]
+      }
+      // 第五部分——前端优化
+      const arr5 = {
+        floder: '5.前端优化',
+        content: [
+          { name: '计算机组成原理', check: '❌' },
+          { name: '数据结构与算法', check: '❌' },
+          { name: '操作系统', check: '❌' },
+          { name: '计算机网络', check: '❌' }
+        ]
+      }
+
+      // 生成tbody内容
+      function initPages(arrays, bodys) {
+        arrays.content.forEach((item, index) => {
+          const uurl = `./${arrays.floder}/${item.name}.md`
+          bodys.insertAdjacentHTML(
+            'beforeend',
+            `<li>
+              <a href="${uurl}">${item.check} ${item.name}</a>
+            </li>`
+          )
+        })
+      }
+      function initAll() {
+        initPages(arr0, ul0)
+        initPages(arr1, ul1)
+        initPages(arr2, ul2)
+        initPages(arr3, ul3)
+        initPages(arr4, ul4)
+        initPages(arr5, ul5)
+      }
+      // 时间
+      function updateTime() {
+        const today = new Date()
+        const year = String(today.getFullYear())
+        const month = String(today.getMonth() + 1).padStart(2, '0') // 月份从0开始，需+1
+        const day = String(today.getDate()).padStart(2, '0')
+        const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+        const weekday = weekdays[today.getDay()]
+        const hours = String(today.getHours()).padStart(2, '0')
+        const minutes = String(today.getMinutes()).padStart(2, '0')
+        const seconds = String(today.getSeconds()).padStart(2, '0')
+        time.textContent = `当前时间：${year}年${month}月${day}日 ${weekday} ${hours}:${minutes}:${seconds}`
+      }
+      initAll()
+      updateTime()
+      setInterval(updateTime, 500)
+    </script>
+  </body>
+</html>
